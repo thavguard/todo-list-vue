@@ -4,7 +4,7 @@
       <div class="checkbox" :data-checked="isDone"></div>
       <div class="title" :data-checked="isDone">{{ title }}</div>
     </div>
-    <div class="remove" @click="$emit('deleteTodo', this.id)">❌</div>
+    <div class="remove" @click="deleteTodo">❌</div>
   </div>
 </template>
 
@@ -23,6 +23,9 @@ export default {
     setCheckbox() {
       this.$emit("setDone", this.isDone);
     },
+    deleteTodo() {
+      this.$emit("deleteTodo", this.id);
+    },
   },
 };
 </script>
@@ -32,6 +35,8 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
+
+  padding: 20px;
 
   max-width: 600px;
 
@@ -74,7 +79,9 @@ export default {
   font-size: 16px;
   line-height: 25px;
 
-  max-width: 500px;
+  margin-right: 16px;
+
+  max-width: 460px;
   word-wrap: break-word;
 
   &[data-checked="true"] {
@@ -86,11 +93,14 @@ export default {
 
 .flex {
   display: flex;
+  align-items: center;
   flex: 1;
-  padding: 20px;
+  // padding: 20px 0 20px;
 }
 
 .remove {
-  padding: 20px;
+  // padding: 20px;
+
+  user-select: none;
 }
 </style>

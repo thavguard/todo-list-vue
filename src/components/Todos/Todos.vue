@@ -26,13 +26,13 @@
       </div>
       <transition-group name="list" tag="div">
         <Todo
-          v-for="todo in todos.filter(filterTodos)"
+          v-for="(todo, index) in todos.filter(filterTodos)"
           :id="todo.id"
           :title="todo.title"
           :isDone="todo.isDone"
           :key="todo.id"
           @setDone="(isDone) => (todo.isDone = !isDone)"
-          @deleteTodo="(id) => deleteTodo(id)"
+          @deleteTodo="() => deleteTodo(index)"
         />
       </transition-group>
     </div>
@@ -50,6 +50,7 @@
 
 <script>
 import Todo from "../Todo/Todo.vue";
+import JSConfetti from "js-confetti";
 
 export default {
   props: {
@@ -78,10 +79,9 @@ export default {
         this.todo = "";
       }
     },
-    deleteTodo(id) {
-      console.log(id);
-
-      // this.todos.splice(i, 1);
+    deleteTodo(index) {
+      console.log(index);
+      this.todos.splice(index, 1);
     },
     filterTodos(todo) {
       switch (this.todosType) {
@@ -99,12 +99,19 @@ export default {
   watch: {
     todos: {
       handler(newTodos) {
-        console.log(newTodos);
         localStorage.setItem("todos", JSON.stringify(newTodos));
+
+        const isAllDone = newTodos.filter((item) => !item.isDone);
+
+        if (!isAllDone.length) {
+          const jsConfetti = new JSConfetti();
+          jsConfetti.addConfetti();
+        }
       },
       deep: true,
     },
   },
+  mounted() {},
 };
 </script>
 
