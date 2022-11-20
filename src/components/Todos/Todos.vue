@@ -1,16 +1,49 @@
 <template>
-  <div class="todos">
-    <div class="title">{{ title }}</div>
-    <Todo
-      v-for="todo in todos"
-      :id="todo.id"
-      :title="todo.title"
-      :isDone="todo.isDone"
-      :key="todo.id"
-      @setDone="(isDone) => (todo.isDone = !isDone)"
-    />
+  <div class="container">
+    <div v-if="todos.length">
+      <div class="header">
+        <div class="title">{{ title }}</div>
+        <div class="filter">
+          <button
+            :class="`${todosType === 'all' && 'active'} filter__item`"
+            @click="todosType = 'all'"
+          >
+            all
+          </button>
+          <button
+            :class="`${todosType === 'completed' && 'active'} filter__item`"
+            @click="todosType = 'completed'"
+          >
+            completed
+          </button>
+          <button
+            :class="`${todosType === 'notCompleted' && 'active'} filter__item`"
+            @click="todosType = 'notCompleted'"
+          >
+            not completed
+          </button>
+        </div>
+      </div>
+      <transition-group name="list" tag="div">
+        <Todo
+          v-for="todo in todos.filter(filterTodos)"
+          :id="todo.id"
+          :title="todo.title"
+          :isDone="todo.isDone"
+          :key="todo.id"
+          @setDone="(isDone) => (todo.isDone = !isDone)"
+          @deleteTodo="(id) => deleteTodo(id)"
+        />
+      </transition-group>
+    </div>
+    <div v-else class="nothing">You have nothing to do yet 📝</div>
     <div class="create-todo">
-      <input type="text" placeholder="Add todo..." @keydown="addTodo" />
+      <input
+        type="text"
+        placeholder="Add todo..."
+        v-model="todo"
+        @keydown="addTodo"
+      />
     </div>
   </div>
 </template>
@@ -24,12 +57,10 @@ export default {
   },
   data() {
     return {
-      todos: [
-        { id: 0, isDone: false, title: "Todo" },
-        { id: 0, isDone: false, title: "Todo" },
-        { id: 0, isDone: false, title: "Todo" },
-        { id: 0, isDone: false, title: "Todo" },
-      ],
+      todos: JSON.parse(localStorage.getItem("todos")) || [],
+      todo: "",
+      nextTodoId: 0,
+      todosType: "all", // all, completed, notCompleted
     };
   },
   components: {
@@ -37,20 +68,110 @@ export default {
   },
   methods: {
     addTodo(e) {
-      if (e.key === "Enter") {
-        this.todos.push({});
+      if (e.key === "Enter" && this.todo) {
+        this.todos.push({
+          id: this.nextTodoId++,
+          isDone: this.todosType === "completed",
+          title: this.todo,
+          createdAt: Date.now(),
+        });
+        this.todo = "";
       }
+    },
+    deleteTodo(id) {
+      console.log(id);
+
+      // this.todos.splice(i, 1);
+    },
+    filterTodos(todo) {
+      switch (this.todosType) {
+        case "completed":
+          return todo.isDone;
+
+        case "notCompleted":
+          return !todo.isDone;
+
+        default:
+          return true;
+      }
+    },
+  },
+  watch: {
+    todos: {
+      handler(newTodos) {
+        console.log(newTodos);
+        localStorage.setItem("todos", JSON.stringify(newTodos));
+      },
+      deep: true,
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
-.todos {
+.container {
+  max-width: 100%;
+
   margin-bottom: 36px;
+  margin-right: 16px;
 }
+
+.list {
+  &-enter-active,
+  &-leave-active,
+  &-move {
+    transition: all 0.4s;
+  }
+  &-enter, &-leave-to /* &-leave-active до версии 2.1.8 */ {
+    opacity: 10%;
+    transform: translateX(100%);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.filter {
+  display: flex;
+  align-items: center;
+
+  &__item {
+    background: coral;
+
+    padding: 4px 8px;
+
+    margin-right: 8px;
+
+    border-radius: 4px;
+
+    cursor: pointer;
+
+    user-select: none;
+
+    font-family: inherit;
+    color: #fff;
+    font-size: 16px;
+
+    &:active {
+      transform: scale(0.99);
+    }
+  }
+}
+.active {
+  background: darkorchid;
+}
+
 .title {
-  font-size: 18px;
+  font-size: 24px;
+
+  margin-right: 16px;
+}
+
+.nothing {
+  font-size: 22px;
 
   margin-bottom: 16px;
 }
@@ -61,6 +182,7 @@ export default {
     align-items: center;
     padding: 20px;
     border: none;
+    width: 100%;
 
     color: #fff;
     font-size: 16px;

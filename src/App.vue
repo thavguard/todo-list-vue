@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <div class="todos">
-      <Todos v-bind:title="'Today'" />
+      <Todos :title="'Today'" />
     </div>
   </div>
 </template>
@@ -34,12 +34,9 @@ body {
   color: #fff;
 }
 
-.app {
-  width: 100vw;
-  height: 100vh;
-
+.todos {
   display: flex;
   justify-content: center;
-  align-items: center;
+  margin-top: 40px;
 }
 </style>

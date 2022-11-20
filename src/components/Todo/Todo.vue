@@ -1,7 +1,10 @@
 <template>
-  <div class="todo" @click="setCheckbox">
-    <div class="checkbox" :data-checked="isDone"></div>
-    <div class="title" :data-checked="isDone">{{ title }}</div>
+  <div class="todo">
+    <div class="flex" @click="setCheckbox">
+      <div class="checkbox" :data-checked="isDone"></div>
+      <div class="title" :data-checked="isDone">{{ title }}</div>
+    </div>
+    <div class="remove" @click="$emit('deleteTodo', this.id)">❌</div>
   </div>
 </template>
 
@@ -12,15 +15,13 @@ export default {
     title: String,
     isDone: Boolean,
   },
-  emits: ["setDone"],
+  emits: {
+    setDone: null,
+    deleteTodo: null,
+  },
   methods: {
     setCheckbox() {
       this.$emit("setDone", this.isDone);
-    },
-  },
-  watch: {
-    isDone(isDone) {
-      console.log(isDone);
     },
   },
 };
@@ -29,9 +30,10 @@ export default {
 <style scoped lang="scss">
 .todo {
   display: flex;
+  justify-content: space-between;
   align-items: center;
 
-  padding: 20px;
+  max-width: 600px;
 
   background: #1e203b;
   border-radius: 11px;
@@ -46,9 +48,7 @@ export default {
     transform: scale(1.05);
   }
 
-  &:not(:last-of-type) {
-    margin-bottom: 16px;
-  }
+  margin-bottom: 16px;
 }
 
 .checkbox {
@@ -72,12 +72,25 @@ export default {
   font-style: normal;
   font-weight: 400;
   font-size: 16px;
-  line-height: 19px;
+  line-height: 25px;
+
+  max-width: 500px;
+  word-wrap: break-word;
 
   &[data-checked="true"] {
     text-decoration: line-through;
 
     color: #eee;
   }
+}
+
+.flex {
+  display: flex;
+  flex: 1;
+  padding: 20px;
+}
+
+.remove {
+  padding: 20px;
 }
 </style>
