@@ -4,24 +4,24 @@
       <div class="header">
         <div class="title">{{ title }}</div>
         <div class="filter">
-          <button
+          <div
             :class="`${todosType === 'all' && 'active'} filter__item`"
             @click="todosType = 'all'"
           >
             all
-          </button>
-          <button
+          </div>
+          <div
             :class="`${todosType === 'completed' && 'active'} filter__item`"
             @click="todosType = 'completed'"
           >
             completed
-          </button>
-          <button
+          </div>
+          <div
             :class="`${todosType === 'notCompleted' && 'active'} filter__item`"
             @click="todosType = 'notCompleted'"
           >
             not completed
-          </button>
+          </div>
         </div>
       </div>
       <transition-group name="list" tag="div">
@@ -111,7 +111,14 @@ export default {
       deep: true,
     },
   },
-  mounted() {},
+  mounted() {
+    this.todos.push({
+      id: this.nextTodoId++,
+      isDone: false,
+      title: "Максим гей",
+      createdAt: Date.now(),
+    });
+  },
 };
 </script>
 
