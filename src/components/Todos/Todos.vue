@@ -111,14 +111,6 @@ export default {
       deep: true,
     },
   },
-  mounted() {
-    this.todos.push({
-      id: this.nextTodoId++,
-      isDone: false,
-      title: "Максим гей",
-      createdAt: Date.now(),
-    });
-  },
 };
 </script>
 
